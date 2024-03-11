@@ -1,0 +1,44 @@
+@use "sass:map";
+@use "sass:list";
+
+$weight-name-map: (
+  100: "Thin",
+  200: "ExtraLight",
+  300: "Light",
+  400: "Regular",
+  500: "Medium",
+  600: "SemiBold",
+  700: "Bold",
+  800: "ExtraBold",
+  900: "Black",
+);
+
+@mixin font-rules(
+  $font-name,
+  $font-weight: 400,
+  $font-variant: "Regular",
+  $font-type: "ttf",
+  $font-family: $font-name,
+) {
+  font-family: $font-family;
+  src: url(
+    "/fonts/" + $font-name + "/" + $font-name + "-" +
+    $font-variant + "." + $font-type
+  );
+  font-weight: $font-weight;
+}
+
+@mixin load-font($font-name, $font-type: "ttf", $blacklist: (), $replace: (), $font-family: $font-name) {
+  $weight-map: map.merge($weight-name-map, $replace);
+  @each $font-weight, $font-variant in $weight-map {
+    @if list.index($blacklist, $font-weight) == null {
+      @font-face {
+        @include font-rules($font-name, $font-weight, $font-variant, $font-type, $font-family);
+      }
+      @font-face {
+        @include font-rules($font-name, $font-weight, $font-variant + "Italic", $font-type, $font-family);
+        font-style: italic;
+      }
+    }
+  }
+}
